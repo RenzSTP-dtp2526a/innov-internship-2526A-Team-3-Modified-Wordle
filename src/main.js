@@ -40,7 +40,7 @@ function deleteLetter() {
 
 function checkValidity() {
     const word = currentGuess.join('');
-    return (WORDS.includes(word));
+    return WORDS.includes(word);
 }
 
 function checkGuess() {
