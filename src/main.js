@@ -1,8 +1,9 @@
 import { WORDS } from './words.js';
 
-const NUMBER_OF_GUESSES = 6;
+const NUMBER_OF_GUESSES = 16;
 const WORD_LENGTH = 5;
 let guessesRemaining = NUMBER_OF_GUESSES;
+let burn_count = 0;
 let currentGuess = [];
 let nextLetter = 0;
 const rightGuessString = WORDS[Math.floor(Math.random() * WORDS.length)];
@@ -41,7 +42,13 @@ function shadeKeyBoard(letter, color) {
 function deleteLetter() {
     currentGuess.pop();
     nextLetter -= 1;
+    const row = document.getElementsByClassName('letter-row')[NUMBER_OF_GUESSES - guessesRemaining];
+    const box = row.children[nextLetter];
+    console.log(box);
+    box.textContent = '';
+    box.classList.remove('filled-box');
 }
+
 
 function checkValidity() {
     const word = currentGuess.join('');
@@ -49,7 +56,8 @@ function checkValidity() {
 }
 
 function checkGuess() {
-    const row = document.getElementsByClassName('letter-row')[6 - guessesRemaining];
+    let burn_guesses = 0
+    const row = document.getElementsByClassName('letter-row')[NUMBER_OF_GUESSES - guessesRemaining];
     let guessString = '';
     const rightGuess = Array.from(rightGuessString);
 
@@ -94,6 +102,7 @@ function checkGuess() {
                 currentGuessLetterColors[i] = 'yellow';
                 letterCount[currentGuess[i]]--;
             } else {
+                burn_guesses++;
                 currentGuessLetterColors[i] = 'grey';
             }
         }
@@ -120,13 +129,16 @@ function checkGuess() {
     }
 
     guessesRemaining -= 1;
+    burn_count += burn_guesses;
     currentGuess = [];
     nextLetter = 0;
 
-    if (guessesRemaining <= 0) {
+    if (guessesRemaining <= burn_count) {
         alert("You've run out of guesses! Game over!");
         alert(`The right word was: "${rightGuessString}"`);
+        guessesRemaining = 0;
     }
+    console.log(burn_guesses)
 }
 
 function insertLetter(pressedKey) {
@@ -135,7 +147,7 @@ function insertLetter(pressedKey) {
     }
     pressedKey = pressedKey.toLowerCase();
 
-    const row = document.getElementsByClassName('letter-row')[6 - guessesRemaining];
+    const row = document.getElementsByClassName('letter-row')[NUMBER_OF_GUESSES - guessesRemaining];
     const box = row.children[nextLetter];
     box.textContent = pressedKey;
     box.classList.add('filled-box');
